@@ -20,7 +20,7 @@ It tracks processed transcript and git metadata only. It must not store transcri
     "commitLimit": 30
   },
   "transcripts": {
-    "cursor:project-slug:transcript-id": {
+    "cursor:transcript-id": {
       "source": "cursor",
       "displayPath": "agent-transcripts/transcript-id.jsonl",
       "mtimeMs": 1777471200000,
@@ -39,7 +39,7 @@ It tracks processed transcript and git metadata only. It must not store transcri
 - `git.lastProcessedHead`: latest git head whose recent history was considered.
 - `git.lastProcessedAt`: when git context was processed.
 - `git.commitLimit`: fallback recent commit window when the previous head is unavailable.
-- `transcripts`: map of stable transcript IDs to metadata.
+- `transcripts`: map of stable, sanitized transcript IDs to metadata.
 - `source`: short label such as `cursor`, `codex`, `claude`, or `other`.
 - `displayPath`: optional relative or best-effort path for debugging only.
 - `mtimeMs` and `size`: basic incremental change detection.
@@ -51,10 +51,10 @@ It tracks processed transcript and git metadata only. It must not store transcri
 Use keys shaped like:
 
 ```text
-source:project-or-workspace-slug:transcript-id
+source:transcript-id
 ```
 
-Never use absolute local paths as keys. They are not portable across team members and can leak private machine details.
+Never use absolute local paths, machine-local workspace slugs, usernames, or path-derived identifiers as keys. They are not portable across team members and can leak private machine details.
 
 ## Git Bounds
 
