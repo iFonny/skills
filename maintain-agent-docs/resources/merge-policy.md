@@ -35,6 +35,24 @@ Write directly only when all are true:
 
 Otherwise, dry-run only.
 
+## Multi-File Updates
+
+Documentation updates are not limited to one file. A single durable signal may require coordinated changes across several docs.
+
+When a signal affects multiple documentation surfaces:
+
+- identify every impacted target file before writing
+- group dry-run diffs by file
+- update all affected docs in the same pass when edits are authorized
+- keep one source of truth and link to it instead of duplicating detailed guidance
+- validate every changed doc after the update
+
+Examples:
+
+- a new API convention may update `src/api/README.md` and a routing note in `.agents/rules/api.md`
+- a rule placement change may update `AGENTS.md`, a specialized rule, and a skill resource
+- stale guidance may require deleting one rule and adding a replacement elsewhere
+
 ## Candidate Questions
 
 Ask a structured question before using a noticed element in documentation when the candidate is useful but:
@@ -68,6 +86,9 @@ Reason: repeated user correction and existing docs lack the rule.
 ```diff
 + New proposed line.
 ```
+
+### `path/to/file2.md`
+....
 ~~~
 
 Do not write files during dry-run.
