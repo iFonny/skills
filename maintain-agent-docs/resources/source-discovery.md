@@ -39,25 +39,38 @@ Always consider the current conversation first.
 Then process transcript files that are new or changed since the index:
 
 - Cursor transcripts when available in the current environment.
-- Codex, Claude, or other agent transcripts only when their source locations are known, configured, or provided by the user.
+- Codex session transcripts when the local Codex session store exists and sessions can be matched to the current project.
+- Claude or other agent transcripts only when their source locations are known, configured, or provided by the user.
 - Project-specific transcript sources from project docs notes or a dedicated config section.
 
 Known source patterns:
 
 - `cursor`: current conversation context plus Cursor workspace transcript files, commonly under a Cursor project-state directory shaped like `<cursor-project-state>/<workspace-slug>/agent-transcripts/*.jsonl`.
-- `codex`: Codex CLI session transcripts when present, commonly under `~/.codex/sessions/**/*.jsonl`.
+- `codex`: auto-discover Codex CLI session transcripts when present, commonly under `~/.codex/sessions/**/*.jsonl`.
 - `claude`: Claude Code project transcripts when present, commonly under `~/.claude/projects/**/*.jsonl`.
 - `antigravity`: Google Antigravity workspace or agent transcripts when available through exports or project/user configuration.
 - `other`: any user-provided or project-configured transcript source.
 
 These patterns are discovery hints, not shared documentation paths. Validate that a source exists before using it.
 
+## Project Matching For Global Transcript Stores
+
+Global transcript stores can contain sessions from unrelated projects. Before processing an auto-discovered transcript from a global store, match it to the current project.
+
+For Codex transcripts:
+
+- Discover the local Codex session store automatically when it exists.
+- Read only the bounded metadata or early JSONL records needed to identify the project.
+- Include a session only when metadata clearly points to the current project, such as `cwd`, `workdir`, workspace root, git repository root, or another explicit project identifier.
+- Skip sessions when no clear project match is found.
+- Do not infer project membership from generic conversation text alone.
+
 Treat transcript paths as machine-local. Never store absolute local paths in shared documentation or as index keys.
 
 Use stable transcript IDs shaped like:
 
 ```text
-source:project-or-workspace-slug:transcript-id
+source:transcript-id
 ```
 
 Keep `displayPath` relative or best-effort only for debugging.
