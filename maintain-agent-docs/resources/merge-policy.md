@@ -35,6 +35,23 @@ Write directly only when all are true:
 
 Otherwise, dry-run only.
 
+## Code Change Documentation Impact
+
+When code changes are part of the active session or recent git scope, check whether related documentation must change before concluding there are no high-signal updates.
+
+Update documentation when code changes affect:
+
+- public APIs, service patterns, query keys, mutations, or data contracts
+- architecture boundaries, folder conventions, imports, routing, or server/client rules
+- commands, setup, environment variables, build, test, deploy, or release workflows
+- design system usage, reusable UI patterns, or component conventions
+- error handling, logging, telemetry, debug flags, security behavior, or permissions
+- docs explicitly marked as source of truth for the touched area
+
+Do not update docs for purely internal implementation changes unless they alter a reusable convention, public behavior, documented workflow, or source-of-truth guidance.
+
+When the impact is strong, non-contradictory, and the target docs are clear, write the related documentation updates in the same pass if edits are authorized. Otherwise, use dry-run or a structured question.
+
 ## Multi-File Updates
 
 Documentation updates are not limited to one file. A single durable signal may require coordinated changes across several docs.

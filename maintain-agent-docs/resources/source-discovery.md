@@ -1,6 +1,6 @@
 # Source Discovery
 
-Use this guide to find documentation, transcripts, and git context without making the global skill project-specific.
+Use this guide to find documentation, transcripts, and git context.
 
 ## Documentation Sources
 
@@ -77,13 +77,15 @@ Keep `displayPath` relative or best-effort only for debugging.
 
 ## Git Context
 
-Use git context to confirm stable changes, not to infer broad rules from weak evidence.
+Use git context to confirm stable changes and detect documentation impact from recent repository changes, not only from the active session.
 
-Default bounds:
+Default incremental bounds:
 
 - current working changes
 - staged changes
 - new commits since `git.lastProcessedHead`
 - if the previous head is unavailable or unreachable, only a small recent window such as the latest 30 commits
+
+Use this scope before concluding that no documentation update is needed. Recent code changes outside the active session can still require documentation updates.
 
 Do not store diffs, commit messages, patches, or file contents in the index. Store only metadata described in `index-format.md`.

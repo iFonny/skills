@@ -35,20 +35,21 @@ No high-signal memory updates.
 2. Load project docs notes and source configuration if present. Use `resources/project-notes-lookup.md`.
 3. Load `.agents/state/agent-updated-docs-index.json` if present. Use `resources/index-format.md`.
 4. Process only new or changed transcript sources plus bounded git context.
-5. Extract only durable, reusable signals:
+5. Run a documentation impact check for code changes from the active session, working tree, staged changes, and commits since `git.lastProcessedHead`.
+6. Extract only durable, reusable signals:
    - recurring user preferences or corrections
    - stable workspace facts
    - repeatable workflows
    - architecture, tooling, or process facts that affect future agent behavior
-6. For useful but uncertain, ambiguous, sensitive, or contradictory candidates, ask a structured question before using them in documentation.
-7. Apply the merge and placement rules in `resources/merge-policy.md`.
-8. Validate the result:
+7. For useful but uncertain, ambiguous, sensitive, or contradictory candidates, ask a structured question before using them in documentation.
+8. Apply the merge and placement rules in `resources/merge-policy.md`.
+9. Validate the result:
    - `AGENTS.md` links still resolve
    - no duplicate or contradictory rules were introduced
    - every `SKILL.md` stays under 500 lines
    - resource links stay one level deep
    - `.cursor/rules` was not edited directly
-9. Refresh the index atomically after transcript or git processing.
+10. Refresh the index atomically after transcript or git processing.
 
 ## Safety Rules
 
