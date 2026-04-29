@@ -35,6 +35,25 @@ Write directly only when all are true:
 
 Otherwise, dry-run only.
 
+## Candidate Questions
+
+Ask a structured question before using a noticed element in documentation when the candidate is useful but:
+
+- uncertain or weakly evidenced
+- ambiguous in scope or wording
+- possibly sensitive or private after redaction
+- contradicted by existing documentation
+- unclear in placement between global preference, project fact, workflow, rule, skill, or human docs
+
+Prefer options shaped like:
+
+- use as documentation
+- ignore
+- reformulate
+- provide more context
+
+Do not ask about candidates that should be rejected outright, such as secrets, private data, one-off task details, or raw transcript fragments.
+
 ## Dry-Run Format
 
 Dry-run output should include proposed diffs grouped by target file:

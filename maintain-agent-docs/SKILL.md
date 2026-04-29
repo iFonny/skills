@@ -40,19 +40,21 @@ No high-signal memory updates.
    - stable workspace facts
    - repeatable workflows
    - architecture, tooling, or process facts that affect future agent behavior
-6. Apply the merge and placement rules in `resources/merge-policy.md`.
-7. Validate the result:
+6. For useful but uncertain, ambiguous, sensitive, or contradictory candidates, ask a structured question before using them in documentation.
+7. Apply the merge and placement rules in `resources/merge-policy.md`.
+8. Validate the result:
    - `AGENTS.md` links still resolve
    - no duplicate or contradictory rules were introduced
    - every `SKILL.md` stays under 500 lines
    - resource links stay one level deep
    - `.cursor/rules` was not edited directly
-8. Refresh the index atomically after transcript or git processing.
+9. Refresh the index atomically after transcript or git processing.
 
 ## Safety Rules
 
 - Never store transcript content, transcript summaries, excerpts, absolute local paths, secrets, or private data in the index.
 - Never copy raw transcript fragments containing private paths, names, tokens, `.env` values, customer data, or sensitive ticket details into docs.
+- Ask before using a noticed element when its meaning, scope, durability, sensitivity, or placement is uncertain.
 - If a new signal contradicts existing documentation, stop in dry-run, cite the conflict, and ask for confirmation before changing it unless the existing documentation is clearly broken.
 - Remove or replace stale documentation when newer repeated evidence shows an old convention is obsolete; do not only append new rules.
 
