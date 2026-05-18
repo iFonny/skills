@@ -38,7 +38,11 @@ No high-signal memory updates.
 4. Process only new or changed transcript sources plus bounded git context.
 5. Run a documentation impact check for code changes from the active session, working tree, staged changes, and commits since `git.lastProcessedHead`.
 5a. Before concluding the impact check, enumerate the file list changed in that scope using `git diff --name-only <lastProcessedHead>..HEAD`, plus working-tree and staged changes. Map each path against the impact zones in `resources/merge-policy.md`. Commit messages and summaries are not a substitute for the file list.
-5b. For every file whose path falls in or near an impact zone, read the actual diff (`git diff <lastProcessedHead>..HEAD -- <path>` plus working-tree and staged hunks) before deciding whether documentation must change. Skip diffs only for files that clearly cannot affect any documented convention (e.g. lockfiles, generated output, asset bumps).
+5b. Read the actual diff for changed files before deciding whether documentation must change:
+   - Run `git diff --stat <lastProcessedHead>..HEAD` (plus working-tree and staged) to get per-file change sizes.
+   - For each changed file, read the diff with `git diff <lastProcessedHead>..HEAD -- <path>`.
+   - Skip files that clearly cannot affect any documented convention (lockfiles, generated output, asset bumps).
+   - Budget cap: when the cumulative diff already read exceeds ~300 KB or ~50 files, stop reading diffs, fall back to file-name + impact-zone judgment for the rest, and warn the user that the scope is too large for exhaustive diff reading — suggest a checkpoint to shrink the next scope.
 6. Extract only durable, reusable signals:
    - recurring user preferences or corrections
    - stable workspace facts
