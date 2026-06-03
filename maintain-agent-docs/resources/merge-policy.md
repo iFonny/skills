@@ -81,6 +81,8 @@ Ask a structured question before using a noticed element in documentation when t
 - contradicted by existing documentation
 - unclear in placement between global preference, project fact, workflow, rule, skill, or human docs
 
+Do not suppress useful but uncertain documentation candidates. Surface them as proposals with clear confidence, evidence, and a question so the user can accept, reject, or refine them.
+
 Prefer options shaped like:
 
 - use as documentation
