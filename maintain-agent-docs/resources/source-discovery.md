@@ -14,6 +14,7 @@ Read relevant existing documentation before proposing updates:
 - `.agents/rules/*`
 - `.agents/skills/*`
 - `.agents/workflows/*`
+- `skills-lock.json` when present, to identify upstream-owned skills that must not be edited directly
 - `docs/**`
 - `.github/**`
 - other project-owned `*.md` files when they are clearly part of developer or agent guidance

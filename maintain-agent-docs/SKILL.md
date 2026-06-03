@@ -62,6 +62,7 @@ No high-signal memory updates.
 
 - Never store transcript content, transcript summaries, excerpts, absolute local paths, secrets, or private data in the index.
 - Never copy raw transcript fragments containing private paths, names, tokens, `.env` values, customer data, or sensitive ticket details into docs.
+- If `skills-lock.json` marks a skill with `sourceType: "github"`, treat that skill as upstream-owned. Do not modify that skill or its resources directly; place project-specific overrides in project docs, rules, notes, or a separate project-owned skill instead.
 - Ask before using a noticed element when its meaning, scope, durability, sensitivity, or placement is uncertain.
 - If a new signal contradicts existing documentation, stop in dry-run, cite the conflict, and ask for confirmation before changing it unless the existing documentation is clearly broken.
 - Remove or replace stale documentation when newer repeated evidence shows an old convention is obsolete; do not only append new rules.
