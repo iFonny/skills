@@ -59,6 +59,7 @@ Documentation updates are not limited to one file. A single durable signal may r
 When a signal affects multiple documentation surfaces:
 
 - identify every impacted target file before writing
+- do not stop after the first valid documentation change; continue scanning the processed scope for other impacted docs before presenting proposals
 - group dry-run diffs by file
 - update all affected docs in the same pass when edits are authorized
 - keep one source of truth and link to it instead of duplicating detailed guidance
@@ -92,6 +93,8 @@ Do not ask about candidates that should be rejected outright, such as secrets, p
 ## Dry-Run Format
 
 Dry-run output should include proposed diffs grouped by target file:
+
+Prefer surfacing a reasonable documentation proposal with confidence and evidence over silently omitting a possible impact. The user can reject or refine proposals; missing an impacted doc creates stale guidance.
 
 ~~~markdown
 ## Proposed Documentation Updates
