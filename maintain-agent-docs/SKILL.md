@@ -21,6 +21,7 @@ Do not use it to preserve one-off task details, secrets, private data, transient
 - Default to dry-run unless the user explicitly asks to update documentation or the active workflow clearly authorizes edits.
 - In dry-run, provide proposed diffs grouped by target file, confidence, and evidence. Do not write documentation.
 - After presenting the dry-run, end with a structured question (via the available question tool) listing each proposal as an option. Apply only the proposals the user selects. Skip the question entirely when there are no proposals — the "No high-signal memory updates." response is sufficient. The index refresh is bookkeeping, not a proposal: never put it in the question.
+- Treat each invocation as a fresh complete pass for the current request. Do not reuse conclusions, proposals, or "no update" results from a previous `maintain-agent-docs` run unless the user explicitly asks for continuity; the index is only a processing bound and bookkeeping aid.
 - If no meaningful updates exist, respond exactly:
 
 ```text
