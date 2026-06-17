@@ -75,6 +75,8 @@ It may store richer candidate summaries and short rationale than the index when 
 
 - Write run state atomically after every batch that changes candidates.
 - Merge new candidates into existing run state; deduplicate by target, summary, and evidence references.
+- For multi-batch runs, do not keep candidates only in model context. Persist them to run-state after each batch.
 - Keep candidates until the run is complete and the user has accepted, rejected, or discarded them.
 - Delete or clear the file after completion. If deletion fails, mark `status` as `complete` and remove candidate details.
 - Never treat run state as evidence that a source was processed; use the index for progress.
+

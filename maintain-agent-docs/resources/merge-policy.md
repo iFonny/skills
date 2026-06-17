@@ -103,7 +103,22 @@ Do not ask about candidates that should be rejected outright, such as secrets, p
 
 ## Dry-Run Format
 
-Dry-run output should include proposed diffs grouped by target file:
+Dry-run output should start with a short run status:
+
+```text
+Status: complete | partial
+Current conversation: processed | skipped
+Transcripts by source: processed | skipped | incomplete
+Git working tree/staged: processed | skipped
+Git history: processed | skipped | incomplete (selected scope: ...)
+Index refreshed: yes | no (reason)
+Run-state refreshed: yes | no | not needed (reason)
+```
+
+If status is `partial`, do not present normal documentation proposals. List what
+remains unprocessed, explain the blocker, and ask for the next batch decision.
+
+Complete dry-run output should include proposed diffs grouped by target file:
 
 Prefer surfacing a reasonable documentation proposal with confidence and evidence over silently omitting a possible impact. The user can reject or refine proposals; missing an impacted doc creates stale guidance.
 
@@ -178,6 +193,8 @@ If updates were made, summarize:
 - changed documentation files
 - whether the index was refreshed
 - skipped or rejected candidates, if relevant
+
+Never return `No high-signal memory updates.` for a partial run.
 
 If no meaningful documentation update exists, respond exactly:
 

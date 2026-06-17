@@ -29,12 +29,18 @@ Do not use it to preserve one-off task details, secrets, private data, transient
 - If you delegate work to subagents and the task requires reliability, judgment, or tradeoff analysis, use the same model as the parent agent.
 - Persist after each batch (canonical rule referenced by the resources):
   - write the index and run-state atomically after each batch
+  - before starting the next batch or presenting proposals, confirm that all items
+    in the current batch were processed and persisted, and that any remaining
+    discovered source is either queued for a later batch or explicitly skipped
+    with a reason
   - continue automatically with the next batch while it fits safely in context
   - never present an incomplete sweep as complete
   - pause only when: a user decision is required (`baselineHead` absent or unreachable,
     full sweep vs bounded vs skip, ambiguous candidate); working-tree plus staged changes
     exceed the batch budget; context is too full for the next batch; an index or run-state
-    write fails; or the run is complete and proposals need validation
+    write fails; writes are blocked by runtime mode or tool policy; or the run is
+    complete and proposals need validation
+  - when writes are blocked, ask what to do or abort
   - when a pause needs user input, use the question tool if available; otherwise tell the
     user they can reply `continue`
 - If no meaningful updates exist, respond exactly:
