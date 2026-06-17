@@ -54,7 +54,7 @@ Known source patterns:
 
 These patterns are discovery hints, not shared documentation paths. Validate that a source exists before using it.
 
-Process all matched transcripts that are new or changed since the index. If the transcript backlog exceeds the current batch budget, write an atomic index checkpoint and stop. Ask the user to reply `continue` before processing the next transcript batch. Do not start git processing until transcript processing is up to date.
+Process all matched transcripts that are new or changed since the index. If the transcript backlog exceeds the current batch budget, write an atomic index checkpoint and stop. When the question tool is available, ask whether to process the next transcript batch now or stop for later. Otherwise, tell the user they can reply `continue`. Do not start git processing until transcript processing is up to date.
 
 ## Project Matching For Global Transcript Stores
 

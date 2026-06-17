@@ -24,7 +24,7 @@ Do not use it to preserve one-off task details, secrets, private data, transient
 - After presenting the dry-run, end with a structured question (via the available question tool) listing each proposal as an option. Apply only the proposals the user selects. Skip the question entirely when there are no proposals — the "No high-signal memory updates." response is sufficient. The index refresh is bookkeeping, not a proposal: never put it in the question.
 - Treat each invocation as a fresh complete pass for the current request. Do not reuse conclusions, proposals, or "no update" results from a previous `maintain-agent-docs` run unless the user explicitly asks for continuity; index cursors and sweeps are only processing bounds and bookkeeping aids.
 - If you delegate work to subagents and the task requires reliability, judgment, or tradeoff analysis, prefer the same model as the parent agent when available.
-- If a transcript or git batch reaches the configured budget, write an atomic checkpoint and stop with a clear "checkpointed, please reply 'continue' to process the next batch" message. Do not present an incomplete sweep as complete.
+- If a transcript or git batch reaches the configured budget, write an atomic checkpoint and stop. When the question tool is available, ask whether to process the next batch now or stop for later. Otherwise, tell the user they can reply `continue` to process the next batch. Do not present an incomplete sweep as complete.
 - If no meaningful updates exist, respond exactly:
 
 ```text
@@ -42,7 +42,7 @@ No high-signal memory updates.
 4. Process transcript sources before git:
    - Process every transcript that is new or changed since the index, newest first.
    - Write each processed transcript entry incrementally.
-   - If the transcript batch reaches the budget, write the index atomically, stop, and ask the user to reply `continue`. Do not start or resume git processing until transcripts are up to date.
+   - If the transcript batch reaches the budget, write the index atomically and stop. When possible, use a structured question to offer continuing with the next transcript batch or stopping for later. Do not start or resume git processing until transcripts are up to date.
 5. Run the git documentation impact check only after transcript processing is complete:
    - Always inspect the current working tree and staged changes before any commit sweep.
    - If working-tree plus staged changes exceed the batch budget, stop and ask the user to commit or otherwise shrink the changes. Large uncommitted changes are re-read on every invocation and block reliable progress.
@@ -56,7 +56,7 @@ No high-signal memory updates.
    - Run diff stats for the current batch range, plus working-tree and staged stats when those changes fit the budget.
    - For each changed file in the current batch, read the diff with `git diff <range> -- <path>` or the equivalent staged/working-tree command.
    - Skip files that clearly cannot affect any documented convention (lockfiles, generated output, asset bumps).
-   - Budget limit: when the cumulative diff read reaches ~300 KB or ~50 files, stop the batch, write the index atomically, and ask the user to reply `continue`. Never fall back to file-name-only judgment for unread diffs.
+   - Budget limit: when the cumulative diff read reaches ~300 KB or ~50 files, stop the batch and write the index atomically. When possible, use a structured question to offer continuing with the next git batch or stopping for later. Never fall back to file-name-only judgment for unread diffs.
 6. Extract only durable, reusable signals from each completed transcript or git batch:
    - recurring user preferences or corrections
    - stable workspace facts

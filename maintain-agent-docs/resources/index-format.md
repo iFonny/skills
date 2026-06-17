@@ -98,7 +98,7 @@ When git is available:
 4. If `git.baselineHead` is missing, unavailable, or not an ancestor of the target head, ask the user how to proceed before git processing. Offer full sweep, bounded recent window, or transcripts-only/skip-git. Do not silently fall back to a fixed recent commit count.
 5. Build a deterministic sweep list, for example with `git rev-list --topo-order <baselineHead>..targetHead` for `since-baseline`, or `git rev-list --topo-order <targetHead>` for a user-confirmed `full-history` sweep, newest first.
 6. Process at most `git.batchCommitLimit` commits and the configured diff budget in one batch.
-7. If the batch ends before the sweep is complete, write `git.sweep` atomically and stop with a `checkpointed, please reply 'continue' to process the next batch` message.
+7. If the batch ends before the sweep is complete, write `git.sweep` atomically and stop. When the question tool is available, ask whether to process the next batch now or stop for later. Otherwise, tell the user they can reply `continue` to process the next batch.
 8. After a fully processed sweep, set `git.baselineHead` to the target head, set `git.baselineMode` to `fully-processed`, set `git.lastFullyProcessedHead` to the target head, remove `git.sweep`, and write the index atomically.
 9. If the user selects a bounded first run or skip-git, set `git.baselineHead` and `git.baselineMode` to `user-accepted-skip` for the intentionally excluded older history. Do not set `git.lastFullyProcessedHead` for skipped history.
 
