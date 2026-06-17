@@ -44,8 +44,9 @@ Scope completeness is mandatory:
 - "Exhaustive" means exhaustive for the selected scope, not for history the user explicitly excluded with a bounded window or skip-git choice.
 - Do not silently ignore unread commits, transcripts, or diffs.
 - Do not make documentation-impact decisions from file names alone when the diff was not read.
-- If a transcript or git batch reaches the budget, write a checkpoint and stop. When the question tool is available, ask whether to process the next batch now or stop for later. The remaining scope must stay covered by the transcript metadata or `git.sweep` cursor.
-- A checkpoint is not a conclusion. Resume it before starting unrelated git scope.
+- After each batch, persist progress and candidates and continue automatically when safe; the remaining scope must stay covered by transcript metadata or the `git.sweep` cursor, and candidates so far must stay in run state. Never silently drop unread scope.
+- Automatic continuation is the norm; pausing is the exception (a user decision is required, or the next batch cannot be processed safely).
+- A persisted but incomplete run is not a conclusion. Resume it before starting unrelated git scope.
 
 Update documentation when code changes affect:
 
@@ -121,7 +122,7 @@ Reason: repeated user correction and existing docs lack the rule.
 ....
 ~~~
 
-Do not write documentation files during dry-run. Atomic index checkpoint writes are allowed as bookkeeping, but they must not contain documentation proposal content.
+Do not write documentation files during dry-run. Atomic index writes are allowed as bookkeeping, but they must not contain documentation proposal content.
 
 ## Placement Rules
 

@@ -8,6 +8,8 @@ The incremental index is per project:
 
 It tracks processed transcript and git metadata only. It must not store transcript content, summaries, excerpts, diffs, absolute local paths, secrets, or private data.
 
+Documentation candidates learned during a multi-batch run belong in the transient run-state file described in `run-state.md`, not in this index.
+
 ## Schema
 
 ```json
@@ -31,6 +33,7 @@ It tracks processed transcript and git metadata only. It must not store transcri
       "updatedAt": "2026-04-29T14:10:00.000Z"
     }
   },
+  "transcriptBatchLimit": 50,
   "transcripts": {
     "cursor:transcript-id": {
       "source": "cursor",
@@ -57,9 +60,10 @@ It tracks processed transcript and git metadata only. It must not store transcri
 - `git.sweep.targetHead`: head selected when the sweep started.
 - `git.sweep.rangeKind`: selected sweep range. Use `since-baseline` for incremental or bounded sweeps and `full-history` for a user-confirmed full sweep.
 - `git.sweep.baselineHead`: baseline used to build a `since-baseline` sweep range. Omit it for `full-history`.
-- `git.sweep.cursorCommit`: most recent checkpoint in the deterministic commit list. Resume after this commit in the reconstructed list.
+- `git.sweep.cursorCommit`: most recent processed commit (resume point) in the deterministic commit list. Resume after this commit in the reconstructed list.
 - `git.sweep.order`: processing order. Use `newest-first`.
 - `git.sweep.revListArgs`: exact arguments needed to reconstruct the same commit list, such as `["--topo-order"]`.
+- `transcriptBatchLimit`: maximum number of new or changed transcripts to process in one batch. Prefer 50 unless project docs notes configure a different value.
 - `transcripts`: map of stable, sanitized transcript IDs to metadata.
 - `source`: short label such as `cursor`, `codex`, `claude`, or `other`.
 - `displayPath`: optional relative or best-effort path for debugging only.
@@ -92,19 +96,19 @@ Never use absolute local paths, machine-local workspace slugs, usernames, or pat
 
 When git is available:
 
-1. Inspect current working changes and staged changes. If they exceed the batch budget, stop and ask the user to commit or otherwise shrink the changes before continuing.
+1. Inspect current working and staged changes.
 2. If `git.sweep` exists, resume it before starting a new sweep.
 3. If `git.baselineHead` is present and reachable, inspect commits in the selected scope since that baseline.
-4. If `git.baselineHead` is missing, unavailable, or not an ancestor of the target head, ask the user how to proceed before git processing. Offer full sweep, bounded recent window, or transcripts-only/skip-git. Do not silently fall back to a fixed recent commit count.
+4. If `git.baselineHead` is missing, unavailable, or not an ancestor of the target head, resolve the scope with the user before processing (see `SKILL.md`). Never silently fall back to a fixed recent commit count.
 5. Build a deterministic sweep list, for example with `git rev-list --topo-order <baselineHead>..targetHead` for `since-baseline`, or `git rev-list --topo-order <targetHead>` for a user-confirmed `full-history` sweep, newest first.
 6. Process at most `git.batchCommitLimit` commits and the configured diff budget in one batch.
-7. If the batch ends before the sweep is complete, write `git.sweep` atomically and stop. When the question tool is available, ask whether to process the next batch now or stop for later. Otherwise, tell the user they can reply `continue` to process the next batch.
+7. If the batch ends before the sweep is complete, persist `git.sweep` and run-state, then continue automatically when safe. The presence of `git.sweep` means only that the sweep is unfinished, not that a pause is required.
 8. After a fully processed sweep, set `git.baselineHead` to the target head, set `git.baselineMode` to `fully-processed`, set `git.lastFullyProcessedHead` to the target head, remove `git.sweep`, and write the index atomically.
 9. If the user selects a bounded first run or skip-git, set `git.baselineHead` and `git.baselineMode` to `user-accepted-skip` for the intentionally excluded older history. Do not set `git.lastFullyProcessedHead` for skipped history.
 
-The skill guarantees exhaustive git processing only for the selected scope. Older history excluded by a user-selected bounded window or skip-git choice is intentionally out of scope, not processed.
-
 Do not store commit diffs, messages, patches, file contents, transcript summaries, or derived documentation candidates in the index.
+
+Use `.agents/state/agent-updated-docs-run-state.json` for temporary candidate working state across batches. The index remains the only source of truth for progress.
 
 ## Cleanup And Retention
 
@@ -126,4 +130,4 @@ Write the index atomically after each transcript or git batch:
 3. Rename the temporary file over `agent-updated-docs-index.json`.
 4. If writing fails, leave the previous index untouched.
 
-Atomic checkpoint writes are allowed during dry-run because they are bookkeeping. They must not contain documentation proposal content.
+Atomic index writes are allowed during dry-run because they are bookkeeping. They must not contain documentation proposal content; proposal working state belongs in the transient run-state file.
