@@ -39,6 +39,14 @@ Otherwise, dry-run only.
 
 When code changes are part of the active session or recent git scope, check whether related documentation must change before concluding there are no high-signal updates.
 
+Scope completeness is mandatory:
+
+- "Exhaustive" means exhaustive for the selected scope, not for history the user explicitly excluded with a bounded window or skip-git choice.
+- Do not silently ignore unread commits, transcripts, or diffs.
+- Do not make documentation-impact decisions from file names alone when the diff was not read.
+- If a transcript or git batch reaches the budget, write a checkpoint and stop. The remaining scope must stay covered by the transcript metadata or `git.sweep` cursor.
+- A checkpoint is not a conclusion. Resume it before starting unrelated git scope.
+
 Update documentation when code changes affect:
 
 - public APIs, service patterns, query keys, mutations, or data contracts
@@ -113,7 +121,7 @@ Reason: repeated user correction and existing docs lack the rule.
 ....
 ~~~
 
-Do not write files during dry-run.
+Do not write documentation files during dry-run. Atomic index checkpoint writes are allowed as bookkeeping, but they must not contain documentation proposal content.
 
 ## Placement Rules
 

@@ -37,7 +37,7 @@ If these files appear in transcripts, do not copy their contents. Extract only a
 
 Always consider the current conversation first.
 
-Then process transcript files that are new or changed since the index:
+Then process transcript files that are new or changed since the index, newest first, before git context:
 
 - Cursor transcripts when available in the current environment.
 - Codex session transcripts when the local Codex session store exists and sessions can be matched to the current project.
@@ -53,6 +53,8 @@ Known source patterns:
 - `other`: any user-provided or project-configured transcript source.
 
 These patterns are discovery hints, not shared documentation paths. Validate that a source exists before using it.
+
+Process all matched transcripts that are new or changed since the index. If the transcript backlog exceeds the current batch budget, write an atomic index checkpoint and stop. Ask the user to reply `continue` before processing the next transcript batch. Do not start git processing until transcript processing is up to date.
 
 ## Project Matching For Global Transcript Stores
 
@@ -84,9 +86,18 @@ Default incremental bounds:
 
 - current working changes
 - staged changes
-- new commits since `git.lastProcessedHead`
-- if the previous head is unavailable or unreachable, only a small recent window such as the latest 30 commits
+- new commits in the selected scope since `git.baselineHead`
+- an in-progress `git.sweep`, when present, before starting a new sweep
 
 Use this scope before concluding that no documentation update is needed. Recent code changes outside the active session can still require documentation updates.
+
+Git history processing is exhaustive only for the selected scope:
+
+- When `git.baselineHead` exists and is an ancestor of the target head, inspect `git.baselineHead..targetHead` in deterministic batches, newest first.
+- When the user explicitly chooses a full sweep, inspect the full reachable history with a deterministic `full-history` sweep.
+- When no baseline exists, or the baseline is unavailable or not an ancestor of the target head, ask the user before git processing. Offer full sweep, bounded recent window, or transcripts-only/skip-git.
+- Do not silently fall back to a fixed recent commit count. A bounded recent window is allowed only when the user chooses it.
+- If the user chooses a bounded window or skip-git, older history is intentionally out of scope, not processed.
+- If working-tree plus staged changes exceed the batch budget, stop and ask the user to commit or otherwise shrink the changes before continuing.
 
 Do not store diffs, commit messages, patches, or file contents in the index. Store only metadata described in `index-format.md`.
