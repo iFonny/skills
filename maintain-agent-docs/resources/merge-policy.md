@@ -23,17 +23,15 @@ Reject:
 - raw transcript fragments
 - content already documented in the right place
 
-## Confidence Rules
+## Confidence
 
-Write directly only when all are true:
+Attach a confidence level to every proposal so the user can judge it:
 
-- the user explicitly requested documentation edits or the active workflow authorizes them
-- the signal is repeated, explicitly corrected by the user, or confirmed by docs, code, or git
-- the target location is clear
-- the update does not contradict existing documentation
-- the wording can be generalized without preserving private details
+- high: the signal is repeated, explicitly corrected by the user, or confirmed by docs, code, or git; the target location is clear; it does not contradict existing documentation; and the wording can be generalized without preserving private details
+- medium: the signal is useful but its evidence, scope, wording, or placement is partly uncertain
+- low: the signal is plausible but weakly evidenced or ambiguous
 
-Otherwise, dry-run only.
+Confidence only informs the proposal. It never authorizes writing documentation without user selection.
 
 ## Code Change Documentation Impact
 
@@ -60,7 +58,7 @@ Update documentation when code changes affect:
 
 Do not update docs for purely internal implementation changes unless they alter a reusable convention, public behavior, documented workflow, or source-of-truth guidance.
 
-When the impact is strong, non-contradictory, and the target docs are clear, write the related documentation updates in the same pass if edits are authorized. Otherwise, use dry-run or a structured question.
+When the impact is strong, non-contradictory, and the target docs are clear, include the related documentation updates as high-confidence proposals. Surface uncertain or contradictory impacts as lower-confidence proposals or a structured question.
 
 ## Multi-File Updates
 
@@ -70,8 +68,8 @@ When a signal affects multiple documentation surfaces:
 
 - identify every impacted target file before writing
 - do not stop after the first valid documentation change; continue scanning the processed scope for other impacted docs before presenting proposals
-- group dry-run diffs by file
-- update all affected docs in the same pass when edits are authorized
+- group proposed diffs by file
+- propose updates for all affected docs together, then apply only the selected ones
 - keep one source of truth and link to it instead of duplicating detailed guidance
 - validate every changed doc after the update
 
@@ -102,9 +100,9 @@ Prefer options shaped like:
 
 Do not ask about candidates that should be rejected outright, such as secrets, private data, one-off task details, or raw transcript fragments.
 
-## Dry-Run Format
+## Proposal Format
 
-Dry-run output should start with a short run status:
+Output should start with a short run status:
 
 ```text
 Status: complete | partial
@@ -120,7 +118,7 @@ Run-state refreshed: yes | no | not needed (reason)
 If status is `partial`, do not present normal documentation proposals. List what
 remains unprocessed, explain the blocker, and ask for the next batch decision.
 
-Complete dry-run output should include proposed diffs grouped by target file:
+Complete output should include proposed diffs grouped by target file:
 
 Prefer surfacing a reasonable documentation proposal with confidence and evidence over silently omitting a possible impact. The user can reject or refine proposals; missing an impacted doc creates stale guidance.
 
@@ -139,7 +137,7 @@ Reason: repeated user correction and existing docs lack the rule.
 ....
 ~~~
 
-Do not write documentation files during dry-run. Atomic index writes are allowed as bookkeeping, but they must not contain documentation proposal content.
+Do not write documentation files before the user selects proposals. Atomic index writes are allowed as bookkeeping, but they must not contain documentation proposal content.
 
 ## Placement Rules
 
@@ -157,7 +155,7 @@ Do not duplicate detailed sub-rules in `AGENTS.md`. Link to the specialized rule
 
 If a new signal contradicts existing documentation:
 
-1. Stop in dry-run.
+1. Present the change as a proposal, not a direct edit.
 2. Cite the existing documentation and the new evidence at a high level.
 3. Ask for confirmation before replacing the rule.
 

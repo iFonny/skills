@@ -18,15 +18,15 @@ Do not use it to preserve one-off task details, secrets, private data, transient
 
 ## Operating Mode
 
-- Default to dry-run unless the user explicitly asks to update documentation or the active workflow clearly authorizes edits.
-- In dry-run, provide proposed diffs grouped by target file, confidence, and evidence. Do not write documentation.
-- Index, local registry, and run-state updates are bookkeeping, not documentation edits. During dry-run, you may write them atomically to preserve transcript and git progress.
+- Always present documentation changes as proposals; never write documentation files directly. Apply only the proposals the user selects.
+- Provide proposed diffs grouped by target file, with confidence and evidence. Do not write documentation before the user selects proposals.
+- Index, local registry, and run-state updates are bookkeeping, not documentation edits. Write them atomically to preserve transcript and git progress, independent of which proposals are applied.
 - When batching, keep candidates learned so far in transient run state
   (`.agents/state/agent-updated-docs-run-state.json`) so a later batch continues the same run.
   It is local and not a source of truth. See `resources/run-state.md`.
-- After presenting the dry-run, end with a structured question (via the available question tool) listing each proposal as an option. Apply only the proposals the user selects. Skip the question entirely when there are no proposals — the "No high-signal memory updates." response is sufficient. The index refresh is bookkeeping, not a proposal: never put it in the question.
+- After presenting the proposals, end with a structured question (via the available question tool) listing each proposal as an option. Apply only the proposals the user selects. Skip the question entirely when there are no proposals — the "No high-signal memory updates." response is sufficient. The index refresh is bookkeeping, not a proposal: never put it in the question.
 - Treat each invocation as a fresh complete pass for the current request. Do not reuse conclusions, proposals, or "no update" results from a previous `maintain-agent-docs` run unless the user explicitly asks for continuity; index cursors and sweeps are only processing bounds and bookkeeping aids.
-- If you delegate work to subagents and the task requires reliability, judgment, or tradeoff analysis, use the same model as the parent agent.
+- If you delegate work to subagents and the task requires reliability, judgment, or tradeoff analysis, adjust the model and reasoning depth, but never more powerful than the parent agent.
 - Persist after each batch (canonical rule referenced by the resources):
   - write the compact index, local registry when changed, and run-state according to `resources/index-format.md` and `resources/run-state.md`
   - before starting the next batch or presenting proposals, confirm that all items
@@ -57,7 +57,7 @@ No high-signal memory updates.
 1. Read the current project entry points and docs before proposing changes. Use `resources/source-discovery.md`.
 2. Load project docs notes and source configuration if present. Use `resources/project-notes-lookup.md`.
 3. Load `.agents/state/agent-updated-docs-index.json` if present. Use `resources/index-format.md`; if the index is not current or still has legacy transcript entries, load `resources/index-migrations.md` before processing any transcript or git batch.
-3a. Load `.agents/state/agent-updated-docs-run-state.json` if present. Use `resources/run-state.md`. For multi-batch runs, write run-state after every batch.
+   3a. Load `.agents/state/agent-updated-docs-run-state.json` if present. Use `resources/run-state.md`. For multi-batch runs, write run-state after every batch.
 4. Process transcript sources before git:
    - Select transcript files from compact index watermarks, the recent safety window, and the local registry when available.
    - Process up to `transcriptBatchLimit` per batch.
@@ -69,8 +69,8 @@ No high-signal memory updates.
    - If `git.sweep` exists, resume it before starting a new sweep.
    - If no `git.baselineHead` exists, or the stored baseline is unavailable or not an ancestor of the current target, ask a structured question before git processing. Offer full sweep, bounded recent window, or transcripts-only/skip-git. Never start a full history sweep without explicit user confirmation.
    - Guarantee exhaustive processing only for the selected scope; excluded older history is intentionally out of scope, not processed.
-5a. Before concluding the impact check, enumerate the file list changed in the selected scope commit by commit as described in `resources/source-discovery.md`, plus working-tree and staged changes. Map each path against the impact zones in `resources/merge-policy.md`. Commit messages, summaries, and final tree diffs are not substitutes for the commit-by-commit file list.
-5b. Read the actual diff for changed files before deciding whether documentation must change:
+     5a. Before concluding the impact check, enumerate the file list changed in the selected scope commit by commit as described in `resources/source-discovery.md`, plus working-tree and staged changes. Map each path against the impact zones in `resources/merge-policy.md`. Commit messages, summaries, and final tree diffs are not substitutes for the commit-by-commit file list.
+     5b. Read the actual diff for changed files before deciding whether documentation must change:
    - Use the deterministic commit list from `resources/source-discovery.md`.
    - Store sweep state with the fields defined in `resources/index-format.md`, then reconstruct the same list when resuming.
    - Run diff stats for the current batch range, plus working-tree and staged stats when those changes fit the budget.
@@ -100,7 +100,7 @@ No high-signal memory updates.
 - Never copy raw transcript fragments containing private paths, names, tokens, `.env` values, customer data, or sensitive ticket details into docs.
 - If `skills-lock.json` marks a skill with `sourceType: "github"`, treat that skill as upstream-owned. Do not modify that skill or its resources directly; place project-specific overrides in project docs, rules, notes, or a separate project-owned skill instead.
 - Ask before using a noticed element when its meaning, scope, durability, sensitivity, or placement is uncertain.
-- If a new signal contradicts existing documentation, stop in dry-run, cite the conflict, and ask for confirmation before changing it unless the existing documentation is clearly broken.
+- If a new signal contradicts existing documentation, cite the conflict in the proposal and ask for confirmation before changing it unless the existing documentation is clearly broken.
 - Remove or replace stale documentation when newer repeated evidence shows an old convention is obsolete; do not only append new rules.
 
 ## Resources
@@ -110,4 +110,4 @@ No high-signal memory updates.
 - `resources/index-format.md`: current compact index schema, local transcript registry, git sweep fields, and normal atomic writes.
 - `resources/index-migrations.md`: legacy index migration procedures loaded only when needed.
 - `resources/run-state.md`: transient local candidate state across transcript and git batches.
-- `resources/merge-policy.md`: signal filtering, confidence, placement, conflicts, dry-run, and validation.
+- `resources/merge-policy.md`: signal filtering, confidence, placement, conflicts, proposal format, and validation.

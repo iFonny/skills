@@ -167,5 +167,5 @@ For non-migration batches:
 5. If a required write fails, leave the previous files untouched and report a
    partial run.
 
-Index and registry writes are allowed during dry-run because they are
+Index and registry writes are always allowed because they are
 bookkeeping. They must not contain documentation proposal content.
