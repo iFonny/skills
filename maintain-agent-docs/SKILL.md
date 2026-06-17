@@ -23,6 +23,7 @@ Do not use it to preserve one-off task details, secrets, private data, transient
 - Index updates are bookkeeping, not documentation edits. During dry-run, you may write the per-project index atomically to preserve transcript and git checkpoints.
 - After presenting the dry-run, end with a structured question (via the available question tool) listing each proposal as an option. Apply only the proposals the user selects. Skip the question entirely when there are no proposals — the "No high-signal memory updates." response is sufficient. The index refresh is bookkeeping, not a proposal: never put it in the question.
 - Treat each invocation as a fresh complete pass for the current request. Do not reuse conclusions, proposals, or "no update" results from a previous `maintain-agent-docs` run unless the user explicitly asks for continuity; index cursors and sweeps are only processing bounds and bookkeeping aids.
+- If you delegate work to subagents and the task requires reliability, judgment, or tradeoff analysis, prefer the same model as the parent agent when available.
 - If a transcript or git batch reaches the configured budget, write an atomic checkpoint and stop with a clear "checkpointed, please reply 'continue' to process the next batch" message. Do not present an incomplete sweep as complete.
 - If no meaningful updates exist, respond exactly:
 
