@@ -8,6 +8,10 @@ handling.
 Do not run migration logic during normal up-to-date scans. The current schema
 and normal write rules live in `index-format.md`.
 
+When this resource applies, complete and persist the migration to current version
+before any transcript or git processing. The only exception is a `When To Ask`
+condition below: pause and ask the user first, then continue.
+
 ## Safety Rules
 
 - Never store transcript content, transcript summaries, excerpts, diffs,

@@ -56,7 +56,7 @@ No high-signal memory updates.
 
 1. Read the current project entry points and docs before proposing changes. Use `resources/source-discovery.md`.
 2. Load project docs notes and source configuration if present. Use `resources/project-notes-lookup.md`.
-3. Load `.agents/state/agent-updated-docs-index.json` if present. Use `resources/index-format.md`; if the index is not current or still has legacy transcript entries, load `resources/index-migrations.md` before processing any transcript or git batch.
+3. Load `.agents/state/agent-updated-docs-index.json` if present. Use `resources/index-format.md`. If the index is not current or still has legacy transcript entries, complete and persist the migration to the current schema using `resources/index-migrations.md` before any transcript or git processing (steps 3a-5). Pause and ask first when a `When To Ask` condition in that resource applies.
    3a. Load `.agents/state/agent-updated-docs-run-state.json` if present. Use `resources/run-state.md`. For multi-batch runs, write run-state after every batch.
 4. Process transcript sources before git:
    - Select transcript files from compact index watermarks, the recent safety window, and the local registry when available.

@@ -14,8 +14,9 @@ Documentation candidates and multi-batch batch state belong in
 `agent-updated-docs-run-state.json`; see `run-state.md`.
 
 If the loaded index is not current, or if it still contains the old
-per-transcript `transcripts` map, load `index-migrations.md` before processing
-any transcript or git batch.
+per-transcript `transcripts` map, complete and persist the migration with
+`index-migrations.md` before processing any transcript or git batch. Pause and
+ask first when a `When To Ask` condition in that resource applies.
 
 ## Current Schema
 
