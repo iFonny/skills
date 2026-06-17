@@ -37,7 +37,8 @@ If these files appear in transcripts, do not copy their contents. Extract only a
 
 Always consider the current conversation first.
 
-Then process transcript files that are new or changed since the index, newest first, before git context:
+Then process transcript files selected by the compact index watermarks, newest
+first, before git context:
 
 - Cursor transcripts when available in the current environment.
 - Codex session transcripts when the local Codex session store exists and sessions can be matched to the current project.
@@ -60,6 +61,32 @@ Batch processing:
 - process the whole batch, persist it, then continue automatically while more remain and the next batch fits safely
 - do not start git processing until transcript processing is up to date
 
+## Transcript Selection
+
+Use `index-format.md` for the compact index and local registry schemas. Source
+discovery only decides which files need inspection.
+
+For each transcript source:
+
+1. Discover files for the source.
+2. Match global transcript stores to the current project before considering a
+   file for processing.
+3. Build stable ids shaped like `source:transcript-id`.
+4. Sort files newest first by `mtimeMs`, then stable id.
+5. Select every file newer than the source watermark.
+6. Always select the newest `recentWindowCount` files as a safety window.
+7. If the local transcript registry exists, also select older files whose
+   `mtimeMs` or size changed since the registry entry.
+8. If the local registry is missing, do not scan all older files by default.
+   Continue with the watermark plus recent window and mark older precise change
+   detection as unavailable or recent-window-only in the compact index.
+9. A full transcript rescan is an explicit maintenance choice, not the default
+   behavior for normal runs.
+
+The active current conversation is considered directly from the live context. If
+its transcript file is still being written, treat the live context as processed
+and avoid using the changing file as stable batch input.
+
 ## Project Matching For Global Transcript Stores
 
 Global transcript stores can contain sessions from unrelated projects. Before processing an auto-discovered transcript from a global store, match it to the current project.
@@ -72,7 +99,8 @@ For Codex transcripts:
 - Skip sessions when no clear project match is found.
 - Do not infer project membership from generic conversation text alone.
 
-Treat transcript paths as machine-local. Never store absolute local paths in shared documentation or as index keys.
+Treat transcript paths as machine-local. Never store absolute local paths in
+shared documentation, compact index keys, or the local registry.
 
 Use stable transcript IDs shaped like:
 
@@ -92,7 +120,33 @@ Inspect, in order:
 - an in-progress `git.sweep`, before starting a new sweep
 - commits in the selected scope since `git.baselineHead`
 
-Cover this scope before concluding no update is needed. For baseline resolution, sweep ranges, batching,
-and batch persistence, follow `index-format.md`; for scope decisions and the selected-scope guarantee, follow `SKILL.md`.
+Resolve git scope from the repository root, not from assumptions about the
+current working directory:
+
+```bash
+git rev-parse --show-toplevel
+git rev-parse --show-prefix
+```
+
+Build the deterministic commit list with `git rev-list --topo-order`. Enumerate
+changed files commit by commit with `git diff-tree`:
+
+```bash
+git rev-list --topo-order <baselineHead>..HEAD
+git diff-tree --no-commit-id --name-only -r <commit> -- <pathspec>
+```
+
+Only after this enumeration should you read the relevant diffs for the current
+batch. A final range diff such as `git diff --name-only <baseline>..HEAD --
+<pathspec>` may be used as a summary or optimization, but never as proof that no
+files changed in history.
+
+If pathspec resolution is uncertain, stop and ask instead of silently using a
+guessed path such as `front/` or `.`.
+
+Cover the selected scope before concluding no update is needed. For baseline
+resolution, sweep ranges, batching, and batch persistence, follow
+`index-format.md`; for scope decisions and the selected-scope guarantee, follow
+`SKILL.md`.
 
 Do not store diffs, commit messages, patches, or file contents in the index.

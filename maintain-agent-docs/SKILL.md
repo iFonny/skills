@@ -20,7 +20,7 @@ Do not use it to preserve one-off task details, secrets, private data, transient
 
 - Default to dry-run unless the user explicitly asks to update documentation or the active workflow clearly authorizes edits.
 - In dry-run, provide proposed diffs grouped by target file, confidence, and evidence. Do not write documentation.
-- Index updates are bookkeeping, not documentation edits. During dry-run, you may write the per-project index atomically to preserve transcript and git progress.
+- Index, local registry, and run-state updates are bookkeeping, not documentation edits. During dry-run, you may write them atomically to preserve transcript and git progress.
 - When batching, keep candidates learned so far in transient run state
   (`.agents/state/agent-updated-docs-run-state.json`) so a later batch continues the same run.
   It is local and not a source of truth. See `resources/run-state.md`.
@@ -28,7 +28,7 @@ Do not use it to preserve one-off task details, secrets, private data, transient
 - Treat each invocation as a fresh complete pass for the current request. Do not reuse conclusions, proposals, or "no update" results from a previous `maintain-agent-docs` run unless the user explicitly asks for continuity; index cursors and sweeps are only processing bounds and bookkeeping aids.
 - If you delegate work to subagents and the task requires reliability, judgment, or tradeoff analysis, use the same model as the parent agent.
 - Persist after each batch (canonical rule referenced by the resources):
-  - write the index and run-state atomically after each batch
+  - write the compact index, local registry when changed, and run-state according to `resources/index-format.md` and `resources/run-state.md`
   - before starting the next batch or presenting proposals, confirm that all items
     in the current batch were processed and persisted, and that any remaining
     discovered source is either queued for a later batch or explicitly skipped
@@ -49,19 +49,19 @@ Do not use it to preserve one-off task details, secrets, private data, transient
 No high-signal memory updates.
 ```
 
-- If documentation changes are made, also refresh the per-project index when transcript or git context was processed.
-- If documentation does not change but transcripts were processed, refresh the index only.
+- If documentation changes are made, also refresh bookkeeping state when transcript or git context was processed.
+- If documentation does not change but transcripts were processed, refresh bookkeeping state only.
 
 ## Workflow
 
 1. Read the current project entry points and docs before proposing changes. Use `resources/source-discovery.md`.
 2. Load project docs notes and source configuration if present. Use `resources/project-notes-lookup.md`.
-3. Load `.agents/state/agent-updated-docs-index.json` if present. Use `resources/index-format.md`; for legacy v1 indexes, follow its `Legacy Indexes` section before processing any transcript or git batch.
-3a. Load `.agents/state/agent-updated-docs-run-state.json` if present. Use `resources/run-state.md`. Merge new candidates into this run state and write it after each batch that changes candidates.
+3. Load `.agents/state/agent-updated-docs-index.json` if present. Use `resources/index-format.md`; if the index is not current or still has legacy transcript entries, load `resources/index-migrations.md` before processing any transcript or git batch.
+3a. Load `.agents/state/agent-updated-docs-run-state.json` if present. Use `resources/run-state.md`. For multi-batch runs, write run-state after every batch.
 4. Process transcript sources before git:
-   - Process transcripts new or changed since the index, newest first.
+   - Select transcript files from compact index watermarks, the recent safety window, and the local registry when available.
    - Process up to `transcriptBatchLimit` per batch.
-   - Write each processed transcript entry incrementally.
+   - Persist source progress through the compact index, local registry when changed, and run-state.
    - At the batch limit, persist the batch and continue automatically if more remain and the next batch fits safely. Do not start or resume git until transcripts are up to date.
 5. Run the git documentation impact check only after transcript processing is complete:
    - Always inspect the current working tree and staged changes before any commit sweep.
@@ -69,12 +69,12 @@ No high-signal memory updates.
    - If `git.sweep` exists, resume it before starting a new sweep.
    - If no `git.baselineHead` exists, or the stored baseline is unavailable or not an ancestor of the current target, ask a structured question before git processing. Offer full sweep, bounded recent window, or transcripts-only/skip-git. Never start a full history sweep without explicit user confirmation.
    - Guarantee exhaustive processing only for the selected scope; excluded older history is intentionally out of scope, not processed.
-5a. Before concluding the impact check, enumerate the file list changed in the selected scope, plus working-tree and staged changes. Use the deterministic sweep range: `<baselineHead>..targetHead` for `since-baseline` sweeps, or the full reachable history for `full-history` sweeps. Map each path against the impact zones in `resources/merge-policy.md`. Commit messages and summaries are not a substitute for the file list.
+5a. Before concluding the impact check, enumerate the file list changed in the selected scope commit by commit as described in `resources/source-discovery.md`, plus working-tree and staged changes. Map each path against the impact zones in `resources/merge-policy.md`. Commit messages, summaries, and final tree diffs are not substitutes for the commit-by-commit file list.
 5b. Read the actual diff for changed files before deciding whether documentation must change:
-   - Use a deterministic commit list for sweeps, such as `git rev-list --topo-order <baselineHead>..targetHead` for `since-baseline` or `git rev-list --topo-order <targetHead>` for `full-history`, newest first.
-   - Store sweep state with `targetHead`, `rangeKind`, optional `baselineHead`, `cursorCommit`, `order`, and `revListArgs`, then reconstruct the same list when resuming.
+   - Use the deterministic commit list from `resources/source-discovery.md`.
+   - Store sweep state with the fields defined in `resources/index-format.md`, then reconstruct the same list when resuming.
    - Run diff stats for the current batch range, plus working-tree and staged stats when those changes fit the budget.
-   - For each changed file in the current batch, read the diff with `git diff <range> -- <path>` or the equivalent staged/working-tree command.
+   - For each changed file in the current batch, read the relevant commit, staged, or working-tree diff before deciding documentation impact.
    - Skip files that clearly cannot affect any documented convention (lockfiles, generated output, asset bumps).
    - At ~300 KB or ~50 files of diff read, persist the batch and continue automatically when safe. Never fall back to file-name-only judgment for unread diffs.
 6. Extract only durable, reusable signals from each completed transcript or git batch:
@@ -107,6 +107,7 @@ No high-signal memory updates.
 
 - `resources/source-discovery.md`: documentation, transcript, and git sources to inspect.
 - `resources/project-notes-lookup.md`: project-local documentation notes and source configuration lookup.
-- `resources/index-format.md`: per-project index schema, v1-to-v2 migration, retention, git bounds, and atomic writes.
+- `resources/index-format.md`: current compact index schema, local transcript registry, git sweep fields, and normal atomic writes.
+- `resources/index-migrations.md`: legacy index migration procedures loaded only when needed.
 - `resources/run-state.md`: transient local candidate state across transcript and git batches.
 - `resources/merge-policy.md`: signal filtering, confidence, placement, conflicts, dry-run, and validation.

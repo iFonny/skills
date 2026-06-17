@@ -44,7 +44,8 @@ Scope completeness is mandatory:
 - "Exhaustive" means exhaustive for the selected scope, not for history the user explicitly excluded with a bounded window or skip-git choice.
 - Do not silently ignore unread commits, transcripts, or diffs.
 - Do not make documentation-impact decisions from file names alone when the diff was not read.
-- After each batch, persist progress and candidates and continue automatically when safe; the remaining scope must stay covered by transcript metadata or the `git.sweep` cursor, and candidates so far must stay in run state. Never silently drop unread scope.
+- After each batch, persist progress and candidates and continue automatically when safe; the remaining scope must stay covered by the compact index, local registry when available, or the `git.sweep` cursor. Never silently drop unread scope.
+- Do not treat a final range diff with no changed files as proof that no files changed during history. Git history impact requires the commit-by-commit file enumeration from `source-discovery.md`.
 - Automatic continuation is the norm; pausing is the exception (a user decision is required, or the next batch cannot be processed safely).
 - A persisted but incomplete run is not a conclusion. Resume it before starting unrelated git scope.
 
@@ -112,6 +113,7 @@ Transcripts by source: processed | skipped | incomplete
 Git working tree/staged: processed | skipped
 Git history: processed | skipped | incomplete (selected scope: ...)
 Index refreshed: yes | no (reason)
+Local registry refreshed: yes | no | not needed (reason)
 Run-state refreshed: yes | no | not needed (reason)
 ```
 
