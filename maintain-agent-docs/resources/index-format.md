@@ -73,14 +73,14 @@ Documentation candidates learned during a multi-batch run belong in the transien
 
 ## Legacy Indexes
 
-Version 1 indexes used `git.lastProcessedHead` and `git.commitLimit`. Do not treat a version 1 `lastProcessedHead` as proof that older history was fully processed. When upgrading safely:
+Version 1 indexes used `git.lastProcessedHead` and `git.commitLimit`. Resolve or migrate a version 1 index immediately after loading it, before processing any transcript or git batch. Do not treat a version 1 `lastProcessedHead` as proof that older history was fully processed. When upgrading safely:
 
 - map `lastProcessedHead` to `git.baselineHead` only as a processing baseline
 - set `git.baselineMode` to `user-accepted-skip` unless the user confirms a full historical sweep
 - leave `git.lastFullyProcessedHead` unset unless the selected scope was actually processed exhaustively
 - replace `commitLimit` with `batchCommitLimit`
 
-If the migration choice is unclear, ask the user before git processing.
+If the migration choice is unclear, ask the user before processing any transcript or git batch.
 
 ## Stable Transcript IDs
 

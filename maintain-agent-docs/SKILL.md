@@ -56,7 +56,7 @@ No high-signal memory updates.
 
 1. Read the current project entry points and docs before proposing changes. Use `resources/source-discovery.md`.
 2. Load project docs notes and source configuration if present. Use `resources/project-notes-lookup.md`.
-3. Load `.agents/state/agent-updated-docs-index.json` if present. Use `resources/index-format.md`.
+3. Load `.agents/state/agent-updated-docs-index.json` if present. Use `resources/index-format.md`; for legacy v1 indexes, follow its `Legacy Indexes` section before processing any transcript or git batch.
 3a. Load `.agents/state/agent-updated-docs-run-state.json` if present. Use `resources/run-state.md`. Merge new candidates into this run state and write it after each batch that changes candidates.
 4. Process transcript sources before git:
    - Process transcripts new or changed since the index, newest first.
@@ -107,6 +107,6 @@ No high-signal memory updates.
 
 - `resources/source-discovery.md`: documentation, transcript, and git sources to inspect.
 - `resources/project-notes-lookup.md`: project-local documentation notes and source configuration lookup.
-- `resources/index-format.md`: per-project index schema, retention, git bounds, and atomic writes.
+- `resources/index-format.md`: per-project index schema, v1-to-v2 migration, retention, git bounds, and atomic writes.
 - `resources/run-state.md`: transient local candidate state across transcript and git batches.
 - `resources/merge-policy.md`: signal filtering, confidence, placement, conflicts, dry-run, and validation.
