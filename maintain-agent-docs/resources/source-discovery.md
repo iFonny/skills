@@ -53,6 +53,11 @@ Known source patterns:
 - `antigravity`: Google Antigravity workspace or agent transcripts when available through exports or project/user configuration.
 - `other`: any user-provided or project-configured transcript source.
 
+When more than one transcript source is available and relevant, ask a structured
+multiple-choice question before transcript analysis so the user can choose which
+provider sources to process. Include one option per provider and an `all`
+option. If only one source is available or relevant, continue without asking.
+
 These patterns are discovery hints, not shared documentation paths. Validate that a source exists before using it.
 
 Batch processing:

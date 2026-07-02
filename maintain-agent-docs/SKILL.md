@@ -26,7 +26,11 @@ Do not use it to preserve one-off task details, secrets, private data, transient
   It is local and not a source of truth. See `resources/run-state.md`.
 - After presenting the proposals, end with a structured question (via the available question tool) listing each proposal as an option. Apply only the proposals the user selects. Skip the question entirely when there are no proposals — the "No high-signal memory updates." response is sufficient. The index refresh is bookkeeping, not a proposal: never put it in the question.
 - Treat each invocation as a fresh complete pass for the current request. Do not reuse conclusions, proposals, or "no update" results from a previous `maintain-agent-docs` run unless the user explicitly asks for continuity; index cursors and sweeps are only processing bounds and bookkeeping aids.
-- If you delegate work to subagents and the task requires reliability, judgment, or tradeoff analysis, adjust the model and reasoning depth, but never more powerful than the parent agent.
+- Subagent delegation and effort:
+  - Never use a model more powerful than the parent agent, and never use maximum or extra-high reasoning for transcript or git batches; these tasks never require it.
+  - Mechanical work (commit enumeration, `git diff-tree` file listing, reading diffs, skipping lockfiles/generated output) runs fine on a fast low-reasoning model.
+  - Documentation-impact decisions on read diffs need at least medium reasoning; ambiguous cases are escalated to the user as structured questions, not resolved by deeper thinking.
+  - Candidate synthesis, deduplication, confidence scoring, and conflict handling stay in the parent agent; do not delegate them.
 - Persist after each batch (canonical rule referenced by the resources):
   - write the compact index, local registry when changed, and run-state according to `resources/index-format.md` and `resources/run-state.md`
   - before starting the next batch or presenting proposals, confirm that all items
