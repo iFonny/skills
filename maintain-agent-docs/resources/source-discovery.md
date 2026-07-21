@@ -14,7 +14,9 @@ Read relevant existing documentation before proposing updates:
 - `.agents/rules/*`
 - `.agents/skills/*`
 - `.agents/workflows/*`
-- `skills-lock.json` when present, to identify upstream-owned skills that must not be edited directly
+- `skills-lock.json` and each relevant `SKILL.md` frontmatter when present, to
+  identify upstream-owned skills from either `sourceType: "github"` or
+  `metadata.github-repo` source tracking injected by `gh skill`
 - `docs/**`
 - `.github/**`
 - other project-owned `*.md` files when they are clearly part of developer or agent guidance

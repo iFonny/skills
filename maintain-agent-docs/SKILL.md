@@ -102,7 +102,12 @@ No high-signal memory updates.
 - Never store transcript content, transcript summaries, excerpts, absolute local paths, secrets, or private data in the index.
 - Keep run-state pragmatic but not reckless: it may contain richer temporary candidates than the index, but do not intentionally store obvious secrets, tokens, private keys, `.env` values, production dumps, or raw private logs.
 - Never copy raw transcript fragments containing private paths, names, tokens, `.env` values, customer data, or sensitive ticket details into docs.
-- If `skills-lock.json` marks a skill with `sourceType: "github"`, treat that skill as upstream-owned. Do not modify that skill or its resources directly; place project-specific overrides in project docs, rules, notes, or a separate project-owned skill instead.
+- Treat a skill as upstream-owned when either `skills-lock.json` marks it with
+  `sourceType: "github"` or its `SKILL.md` frontmatter contains GitHub source
+  tracking under `metadata` (notably `github-repo`; `gh skill` may also inject
+  `github-path`, `github-ref`, and `github-tree-sha`). Do not modify that skill
+  or its resources directly; place project-specific overrides in project docs,
+  rules, notes, or a separate project-owned skill instead.
 - Ask before using a noticed element when its meaning, scope, durability, sensitivity, or placement is uncertain.
 - If a new signal contradicts existing documentation, cite the conflict in the proposal and ask for confirmation before changing it unless the existing documentation is clearly broken.
 - Remove or replace stale documentation when newer repeated evidence shows an old convention is obsolete; do not only append new rules.
