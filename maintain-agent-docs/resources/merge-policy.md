@@ -180,6 +180,7 @@ Do not keep compatibility text for unshipped branch experiments unless the user 
 
 After writing documentation:
 
+- apply the project documentation compliance pass to the written text
 - verify `AGENTS.md` links still resolve
 - check for duplicate or contradictory rule statements
 - keep every `SKILL.md` under 500 lines

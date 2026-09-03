@@ -22,6 +22,7 @@ Do not use it to preserve one-off task details, secrets, private data, transient
 
 - Always present documentation changes as proposals; never write documentation files directly. Apply only the proposals the user selects.
 - Provide proposed diffs grouped by target file, with confidence and evidence. Do not write documentation before the user selects proposals.
+- Before you present proposals, apply the project documentation rules to each proposed diff, including the compliance pass they define.
 - Index, local registry, and run-state updates are bookkeeping, not documentation edits. Write them atomically to preserve transcript and git progress, independent of which proposals are applied.
 - When batching, keep candidates learned so far in transient run state
   (`.agents/state/agent-updated-docs-run-state.json`) so a later batch continues the same run.
@@ -91,6 +92,7 @@ No high-signal memory updates.
 7. For useful but uncertain, ambiguous, sensitive, or contradictory candidates, ask a structured question before using them in documentation.
 8. Apply the merge and placement rules in `resources/merge-policy.md`.
 9. Validate the result:
+   - the project documentation compliance pass was applied to the written text
    - `AGENTS.md` links still resolve
    - no duplicate or contradictory rules were introduced
    - every `SKILL.md` stays under 500 lines
