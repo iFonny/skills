@@ -1,6 +1,8 @@
 ---
 name: maintain-agent-docs
 description: Maintains agent-facing documentation by mining current and recent conversations, transcripts, git context, and existing docs for durable reusable guidance. Use when updating AGENTS.md, agent rules, skills, workflows, project docs, or when the user asks to preserve recurring preferences, stable workspace facts, or documentation learnings.
+disable-model-invocation: true
+license: MIT
 ---
 
 # Maintain Agent Docs
