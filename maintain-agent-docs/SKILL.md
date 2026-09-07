@@ -34,6 +34,8 @@ Do not use it to preserve one-off task details, secrets, private data, transient
   - Mechanical work (commit enumeration, `git diff-tree` file listing, reading diffs, skipping lockfiles/generated output) runs fine on a fast low-reasoning model.
   - Documentation-impact decisions on read diffs need at least medium reasoning; ambiguous cases are escalated to the user as structured questions, not resolved by deeper thinking.
   - Candidate synthesis, deduplication, confidence scoring, and conflict handling stay in the parent agent; do not delegate them.
+  - Give each subagent a self-contained prompt: goal, sources to read, constraints, and the exact output to return.
+  - Write messages to subagents so a human can read them.
 - Persist after each batch (canonical rule referenced by the resources):
   - write the compact index, local registry when changed, and run-state according to `resources/index-format.md` and `resources/run-state.md`
   - before starting the next batch or presenting proposals, confirm that all items
@@ -95,6 +97,8 @@ No high-signal memory updates.
    - the project documentation compliance pass was applied to the written text
    - `AGENTS.md` links still resolve
    - no duplicate or contradictory rules were introduced
+   - no new ask, pause, or stop instruction conflicts with an existing one in another file
+   - the precedence between the user, global docs, project docs, rules, and skills stays explicit
    - every `SKILL.md` stays under 500 lines
    - resource links stay one level deep
    - `.cursor/rules` was not edited directly
@@ -111,7 +115,10 @@ No high-signal memory updates.
   tracking under `metadata` (notably `github-repo`; `gh skill` may also inject
   `github-path`, `github-ref`, and `github-tree-sha`). Do not modify that skill
   or its resources directly; place project-specific overrides in project docs,
-  rules, notes, or a separate project-owned skill instead.
+  rules, notes, or a separate project-owned skill instead. When the user owns
+  the upstream source repository, propose the change against that source and
+  tell the user to refresh the installed copy with `gh skill update` after
+  publication.
 - Ask before using a noticed element when its meaning, scope, durability, sensitivity, or placement is uncertain.
 - If a new signal contradicts existing documentation, cite the conflict in the proposal and ask for confirmation before changing it unless the existing documentation is clearly broken.
 - Remove or replace stale documentation when newer repeated evidence shows an old convention is obsolete; do not only append new rules.
