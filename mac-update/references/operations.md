@@ -34,15 +34,24 @@ Offer further diagnosis without creating directories or changing configuration.
 
 ## Research
 
+Open official release notes directly when their location is known.
+In eco mode, start with consolidated notes or the target release notes.
+If these are unavailable or incomplete, use at most one fallback search and one alternative official source per candidate.
+Do not retry failed fallback requests in eco mode.
+Stop at the limit and mark uncovered versions or missing information explicitly.
+
 Filter manager metadata and request bounded source excerpts without truncating useful release notes.
-Start with advisory summaries, affected versions, fixed versions, and links.
-Read longer descriptions or reproduction code only to resolve a specific impact or exposure question.
+Read security summaries in release notes or a directly linked vendor bulletin.
+Make at most one additional security lookup per candidate when a warning needs clarification.
+Count retries and alternative sources toward this limit.
+Report unresolved points briefly when the limit is reached.
+Do not search CVE databases or inspect exploit details during routine audits.
+Deeper security analysis, including local exposure checks, requires an explicit user request.
 Never execute vulnerability reproductions during the audit.
-Use consolidated security bulletins when available.
 Run at most three independent release research tasks concurrently.
 Reuse findings for the same tool and version interval within the audit.
 Reduce concurrency when rate limits occur and respect the source's retry delay.
-After one unsuccessful retry, use another official source or report the gap.
+For non-security release research in full mode, after one unsuccessful retry, use another official source or report the gap.
 
 ## Report delivery
 
