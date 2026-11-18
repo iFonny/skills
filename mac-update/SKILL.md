@@ -83,6 +83,12 @@ Keep understood minor changes to one or two sentences; missing evidence is not a
 Explain shared dependency effects once.
 Label proposed uses as possibilities.
 
+Under each manager group, show one copyable manual batch command from the [command reference](./references/operations.md#update-commands).
+Include the checked working directory and preserve confirmation prompts.
+Prefer supported interactive selectors; otherwise, identify the command as a standard update without a selector.
+State the batch scope and prerequisites, including when it spans several selection groups.
+Exclude blocked items and unmet prerequisites from runnable batches; keep macOS informational.
+
 Use ordinary chat and split long reports at item boundaries without dropping useful changes.
 Do not compress the report to meet a generic brevity target.
 Mark macOS updates as informational and exclude them from selection.
@@ -94,17 +100,19 @@ Offer each nonempty group in order, applying approved selections before offering
 | Group | Eligibility |
 |---|---|
 | 1. Minor, limited impact | Reviewed changes, known installation, limited effects, no migration or unresolved warning. |
-| 2. Other updates without required changes | Remaining reviewed updates with no documented breaking change, migration, or required modification. Includes runtimes and major versions. |
+| 2. Other updates without required changes | Reviewed upgrades needing no migration or modification, plus optional Homebrew synchronization when actual and target versions match. |
 | 3. Changes required | A breaking change, migration, configuration change, or prerequisite action requires attention. |
 
 Never call updates risk-free or classify them by version number alone.
 Place runtimes and major versions in group 2 or 3.
+Label synchronization as possible reinstallation, not a new version; disclose application closure if needed.
+Offer upgrades with partial notes outside group 1 unless a decisive gap requires deferral.
 Defer items with unclear ownership, decisive missing evidence, unresolved security warnings, or unbounded dependency effects.
 Missing project analysis is a disclosed limit; a specific suspected project conflict warrants Deep or deferral.
 
 Before every question, display its decision context in chat.
 For later selection questions, repeat only the relevant action summary.
-Before selection, show numbered items, versions, consequential effects, and operations from the [command reference](./references/operations.md#update-commands).
+Before selection, show numbered items, versions, consequential effects, and proposed operations.
 Use native multiple selection when supported.
 Otherwise, use one structured freeform question accepting numbers such as `1,3`, `tous`, `aucun`, or `stop`.
 Without a question tool, ask in chat and wait.
@@ -116,9 +124,10 @@ Offer a separately approved task for project migrations; defer the update until 
 Without Deep, describe documented generic changes rather than inventing project-specific edits.
 Propose non-project adjustments only when their effects and recovery are understood.
 
-Selection approves only explicitly displayed operations, including exact commands, installation paths, indirect effects, cleanup, and recovery limits.
-Otherwise, show the missing details and obtain approval before execution.
-Major versions, runtimes, privileges, restarts, application closure, and explicit cleanup require specific approval for the affected items.
+Selection approves only explicitly displayed operations and their automatic manager cleanup.
+Show exact commands, installation paths, indirect effects, and recovery limits before approval.
+Do not add cleanup-disabling overrides such as `HOMEBREW_NO_INSTALL_CLEANUP=1` unless the user requests them.
+Major versions, runtimes, privileges, restarts, application closure, and separate cleanup commands require specific approval for the affected items.
 Recheck versions, targets, and dependency scope before execution; changed scope requires renewed approval.
 Preserve global pins unless their changes are explicitly approved.
 Never bypass manager protections or native authorization, enter passwords, run downloaded scripts, or perform unspecified repairs.
