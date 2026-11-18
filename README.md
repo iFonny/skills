@@ -6,9 +6,9 @@ Keeps agent-facing documentation current. The skill reads conversations, transcr
 
 ### `mac-update`
 
-Lists macOS and global tool updates through the manual `/mac-update` command.
-The skill compares release notes with active project requirements and asks which updates to apply.
-See [the skill](mac-update/SKILL.md) for the procedure.
+Use [`/mac-update`](mac-update/SKILL.md) to review available macOS and global tool updates.
+See important changes and risks, including their potential impact on your projects, before choosing what to install.
+Homebrew maintenance runs first and can install or clean up packages during automatic migrations.
 
 ## Install
 
