@@ -6,10 +6,9 @@ Keeps agent-facing documentation current. The skill reads conversations, transcr
 
 ### `mac-update`
 
-Use [`/mac-update`](mac-update/SKILL.md) to review available macOS and global tool updates.
-Choose eco for bounded release research, or full to also examine project requirements.
+Use [`/mac-update`](mac-update/SKILL.md) to review useful changes and choose updates, starting with those that have limited impact.
+Add `--deep` for project compatibility analysis.
 Both modes show important changes and risks before you choose what to install.
-After mode selection, Homebrew maintenance runs before its inventory and can install or clean up packages during automatic migrations.
 
 ## Install
 
