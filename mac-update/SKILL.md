@@ -32,11 +32,13 @@ Install nothing until the user asks in a later message.
 | Mac App Store | `mas outdated --json` | `mas upgrade <id>` | `mas upgrade` |
 | uv | `uv tool list --outdated` | `uv tool upgrade <tool>` | `uv tool upgrade --all` |
 | pipx | `pipx list --outdated` | `pipx upgrade <pkg>` | `pipx upgrade-all` |
+| Agent skills | `gh skill update --dry-run` | `gh skill update <name> --all` | `gh skill update --all` |
 | macOS | `softwareupdate --list` | None | Réglages Système > Général > Mise à jour de logiciels |
 
 The Homebrew, pnpm, and mise batches ask before any change; never add `--yes` or `HOMEBREW_NO_INSTALL_CLEANUP`.
 A mise target outside the configured range needs `--bump`, which edits the global config; say so in the item.
 `mas upgrade` asks for the macOS password, so only the user runs it.
+`gh skill update` without `--all` fails when it cannot ask; with names, `--all` updates only those skills.
 Look up syntax only when a command fails or needs a new option.
 
 ## Steps
@@ -48,11 +50,14 @@ Skip missing managers.
 A nonzero exit with valid JSON can list outdated items; an error message is a failed check.
 Report each failed check, for example a missing npm global directory, without repair.
 For an outdated cask with `auto_updates` (`brew info --cask --json=v2 <name>`), read the actual version from the app `Info.plist` or `<binary> --version`.
-If that version equals the target, mark the item "déjà à jour (synchronisation Homebrew optionnelle)" and do no changelog research for it.
+If that version equals the target, mark the item "déjà à jour (synchronisation Homebrew optionnelle)".
+Do no changelog research for that item.
 Report a duplicate binary when `command -v <tool>` resolves outside the manager that lists it.
 If the installed pnpm is newer than `latest`, name its channel from `npm view pnpm dist-tags --json`.
 When `brew update` prints `Updated Homebrew from <old tag> (...) to <new tag> (...)`, add Homebrew itself as an item of the Homebrew section.
 Mark it "déjà installé par brew update", give it no command, and read its notes in the `Homebrew/brew` releases.
+From `/tmp`, `gh skill update --dry-run` checks only the skills in user scope, one line per update: `<name> (<owner>/<repo>) <old> > <new> [<ref>]`.
+Count the distinct skills without GitHub metadata in one "Non vérifié" line, and do no changelog research for skills.
 
 ### 2. Changelogs
 
@@ -100,6 +105,10 @@ Use this template, short but complete:
 
 Mineurs : <nom a→b (résumé)>, ...
 
+## Skills (<n>) : `gh skill update --all`
+- <nom> (<owner>/<repo>, <ref>)
+- <nom> (<owner>/<repo>, <ref>)
+
 ## macOS (information)
 ## Non vérifié
 <checks en échec, notes manquantes, reçus Homebrew périmés>
@@ -110,12 +119,13 @@ cd /tmp
 brew update && brew upgrade <a> <b>
 # brew upgrade <x>   # action requise : <raison>
 pnpm update -g --interactive --latest
+gh skill update --all
 ```
 ````
 
 Give each useful change its own bullet, with as many bullets of each kind as the notes contain.
 In a manager, order the items: action required, security, major versions, notable features, useful changes.
-Order the managers by their most important item; the last three sections stay last.
+Order the managers by their most important item; the last four sections stay last, from "Skills".
 Each manager heading has its batch command, and `<n>` counts only the items with a new version.
 Give a per-package command only when it fits on one short line.
 "Tout installer" includes every item.
