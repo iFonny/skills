@@ -6,9 +6,10 @@ Keeps agent-facing documentation current. The skill reads conversations, transcr
 
 ### `mac-update`
 
-Use [`/mac-update`](mac-update/SKILL.md) to review useful changes and choose updates, starting with those that have limited impact.
-Add `--deep` for project compatibility analysis.
-Both modes show important changes and risks before you choose what to install.
+Run [`/mac-update`](mac-update/SKILL.md), or ask which tools on your Mac have updates, to get a report with useful changes, security fixes, and copyable commands. 
+The skill installs nothing until you ask in a later message. Add `--deep` to also check the compatibility of your projects.
+The report is in French unless you ask for another language.
+
 
 ## Install
 
