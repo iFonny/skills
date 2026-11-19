@@ -50,6 +50,8 @@ Report each failed check, for example a missing npm global directory, without re
 For an outdated cask with `auto_updates` (`brew info --cask --json=v2 <name>`), read the actual version from the app `Info.plist` or `<binary> --version`.
 If that version equals the target, mark the item "déjà à jour (synchronisation Homebrew optionnelle)".
 Report a duplicate binary when `command -v <tool>` resolves outside the manager that lists it.
+When `brew update` prints `Updated Homebrew from <old tag> (...) to <new tag> (...)`, add Homebrew itself as an item of the Homebrew section.
+Mark it "déjà installé par brew update", give it no command, and read its notes in the `Homebrew/brew` releases.
 
 ### 2. Changelogs
 
